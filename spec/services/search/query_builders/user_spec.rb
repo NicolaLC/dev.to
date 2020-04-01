@@ -26,6 +26,14 @@ RSpec.describe Search::QueryBuilders::User, type: :service do
       expect(filter.as_hash.dig("query", "bool", "must")).to match_array(exepcted_query)
     end
 
+    it "applies EXCLUDED_TERM_KEYS be default" do
+      filter = described_class.new({})
+      exepcted_filters = [
+        { "terms" => { "roles" => ["banned"] } },
+      ]
+      expect(filter.as_hash.dig("query", "bool", "must_not")).to match_array(exepcted_filters)
+    end
+
     it "ignores params we don't support" do
       params = { not_supported: "trash", search_fields: "cfp" }
       filter = described_class.new(params)
